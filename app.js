@@ -283,16 +283,16 @@ async function generarTicketImagen(btn) {
           const inputOrig = inputsOriginales[index];
           let valor = inputOrig ? inputOrig.value : inputClon.value;
 
-          // Si el renglón está vacío, no mostrar '0.00'
-          const fila = inputClon.closest("tr");
-          if (fila) {
-            const cant = fila.querySelector(".cant-input")?.value;
-            const desc = fila.querySelectorAll("input")[1]?.value;
-            if (
-              !cant &&
-              !desc &&
-              inputClon.classList.contains("importe-input")
-            ) {
+          // Verificar en el elemento ORIGINAL de la página si la fila tiene datos
+          const filaOriginal = inputOrig ? inputOrig.closest("tr") : null;
+          if (filaOriginal && inputClon.classList.contains("importe-input")) {
+            const cantOriginal =
+              filaOriginal.querySelector(".cant-input")?.value;
+            const precioOriginal =
+              filaOriginal.querySelector(".precio-input")?.value;
+
+            // Si no se capturó cantidad ni precio en esta fila, dejamos el campo en blanco
+            if (!cantOriginal && !precioOriginal) {
               valor = "";
             }
           }
