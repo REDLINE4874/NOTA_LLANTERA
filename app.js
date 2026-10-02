@@ -179,11 +179,9 @@ function calcularTotal() {
     total += importe;
   });
 
-  const totalConImpuesto = total * 1.16;
-  document.getElementById("subtotalGeneral").value = total.toFixed(2);
-  document.getElementById("totalGeneral").value = totalConImpuesto.toFixed(2);
+  document.getElementById("totalGeneral").value = total.toFixed(2);
   document.getElementById("cantidadLetra").value =
-    importeEnLetras(totalConImpuesto);
+    importeEnLetras(total);
 }
 
 // Limpiar campos para nueva nota
