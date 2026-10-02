@@ -1,0 +1,65 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Reglas avanzadas para exportación a PDF / Impresión */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 8mm;
+  }
+  body {
+    background-color: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-container {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  input, textarea {
+    border: none !important;
+    background: transparent !important;
+    resize: none;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  /* Quitar indicadores de input de tipo número */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* Ocultar botones incrementales de número */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.border-black-thick {
+  border: 2px solid #000000;
+}
+
+.rounded-box {
+  border-radius: 14px;
+}

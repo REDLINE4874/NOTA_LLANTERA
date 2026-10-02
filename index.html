@@ -8,73 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
-    }
-
-    /* Reglas avanzadas para exportación a PDF / Impresión */
-    @media print {
-      @page {
-        size: letter portrait;
-        margin: 8mm;
-      }
-      body {
-        background-color: #ffffff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .no-print {
-        display: none !important;
-      }
-      .print-container {
-        box-shadow: none !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 auto !important;
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-      input, textarea {
-        border: none !important;
-        background: transparent !important;
-        resize: none;
-        outline: none !important;
-        box-shadow: none !important;
-      }
-      /* Quitar indicadores de input de tipo número */
-      input[type=number]::-webkit-inner-spin-button, 
-      input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
-      }
-      input[type=number] {
-        -moz-appearance: textfield;
-      }
-    }
-
-    /* Ocultar botones incrementales de número */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
-
-    .border-black-thick {
-      border: 2px solid #000000;
-    }
-
-    .rounded-box {
-      border-radius: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body class="p-2 sm:p-6 min-h-screen">
 
@@ -93,15 +27,6 @@
     </div>
     
     <div class="flex flex-wrap items-center gap-2">
-      <!-- Cargar Imagen de Logo -->
-      <label class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg text-xs cursor-pointer transition flex items-center gap-1.5 border border-slate-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span>Cambiar Logo Header</span>
-        <input type="file" id="logoUploader" accept="image/*" class="hidden" onchange="cargarLogoPersonalizado(event)">
-      </label>
-
       <!-- Limpiar -->
       <button onclick="limpiarFormulario()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition flex items-center gap-1.5 border border-slate-300">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,6 +42,13 @@
         </svg>
         Imprimir / Guardar PDF
       </button>
+
+      <button id="descargarImagenBtn" onclick="descargarFacturaComoImagen()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white font-extrabold rounded-lg text-xs shadow-md transition flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Descargar PNG
+      </button>
     </div>
   </div>
 
@@ -124,41 +56,18 @@
   <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-xl border border-slate-300 print-container relative overflow-hidden">
     
     <!-- ENCABEZADO SUPERIOR -->
-    <div class="grid grid-cols-12 gap-3 mb-4 items-start">
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4 items-start">
       
       <!-- ENCABEZADO SUPERIOR IZQUIERDO: LOGO O IMAGEN PERSONALIZADA DE LA LLANTERA -->
-      <div class="col-span-7 flex flex-col items-center justify-center text-center">
-        <!-- Logo Display / Fallback SVG Render -->
-        <div id="logoContainer" class="w-full flex flex-col items-center justify-center">
-          <!-- Intentar cargar la imagen original o archivo logo.png -->
-          <img id="logoImg" src="WhatsApp Image 2026-10-02 at 11.33.51 AM.jpeg" alt="Llantera El Puesto D' Rafa" class="max-h-36 w-auto object-contain mb-1" onerror="mostrarLogoFallback()">
-          
-          <!-- Elemento vectorial de respaldo (solo visible si la imagen no se encuentra) -->
-          <div id="logoFallback" class="hidden w-full text-center">
-            <div class="bg-black text-white px-3 py-2 rounded-xl text-center w-full mb-1 border-2 border-black shadow-sm">
-              <div class="flex items-center justify-center gap-1.5">
-                <svg class="w-6 h-6 text-white fill-current shrink-0" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
-                </svg>
-                <div class="text-left leading-none">
-                  <span class="block text-[9px] tracking-widest font-black">LLANTERA</span>
-                  <span class="block text-[11px] italic text-gray-200">"EL PUESTO"</span>
-                </div>
-                <span class="text-xl font-black italic ml-1">D' RAFA</span>
-              </div>
-              <div class="text-[10px] font-black tracking-wider uppercase mt-1 bg-white text-black py-0.5 px-1 rounded-md italic">
-                SI NO LO TENGO TE LO CONSIGO!!
-              </div>
-            </div>
-            <p class="font-extrabold text-xs text-slate-900 mt-1">Av. Patria No.4901, Local #3</p>
-            <p class="font-bold text-xs text-slate-800">El Colli Urbano</p>
-            <p class="font-extrabold text-sm text-slate-900">Tel.33 2088 9175</p>
-          </div>
+      <div class="sm:col-span-7 flex flex-col items-start justify-start text-left">
+        <!-- Coloca tu imagen como logo.png en la misma carpeta que este archivo. -->
+        <div id="logoContainer" class="min-h-0 sm:min-h-36 w-full flex items-center justify-start">
+          <img id="logoImg" src="logoll.jpeg" alt="Logo" class="max-h-48 max-w-full w-auto object-contain" onerror="this.style.display='none'">
         </div>
       </div>
 
       <!-- ENCABEZADO SUPERIOR DERECHO: NOTA DE COMPRA Y FECHA -->
-      <div class="col-span-5 flex flex-col gap-2.5">
+      <div class="sm:col-span-5 flex flex-col gap-2.5">
         <!-- Cuadro Nota de compra -->
         <div class="border-2 border-black rounded-box p-2 text-center bg-white shadow-sm">
           <label class="block text-xs font-black text-black uppercase tracking-wider">Nota de compra</label>
@@ -205,7 +114,7 @@
       
       <!-- Marca de Agua Tenue en el centro de la tabla -->
       <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.04] z-0">
-        <img id="watermarkImg" src="WhatsApp Image 2026-10-02 at 11.33.51 AM.jpeg" class="max-w-xs object-contain" onerror="this.style.display='none'">
+        <img id="watermarkImg" src="logo.png" class="max-w-xs object-contain" onerror="this.style.display='none'">
       </div>
 
       <table class="w-full text-left border-collapse relative z-10">
@@ -236,23 +145,33 @@
       <!-- CANTIDAD CON LETRA -->
       <div class="border-t-2 border-black p-2 flex items-center gap-2 bg-white">
         <span class="font-black text-xs uppercase shrink-0 text-black">CANTIDAD CON LETRA</span>
-        <input type="text" id="cantidadLetra" placeholder="" class="w-full text-xs font-semibold focus:outline-none bg-transparent uppercase">
+        <input type="text" id="cantidadLetra" placeholder="" readonly class="w-full text-xs font-semibold focus:outline-none bg-transparent uppercase">
       </div>
     </div>
 
-    <!-- SECCIÓN INFERIOR: FIRMA Y TOTAL GENERAL -->
-    <div class="grid grid-cols-12 gap-3 items-end mb-4">
+    <!-- SECCIÓN INFERIOR: FIRMA Y TOTALES -->
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end mb-4">
       <!-- Firma -->
-      <div class="col-span-7">
+      <div class="sm:col-span-6">
         <div class="pt-6 border-b-2 border-black w-4/5"></div>
         <p class="font-black text-xs uppercase text-black mt-1">FIRMA:</p>
       </div>
 
-      <!-- Recuadro Total -->
-      <div class="col-span-5 flex items-center justify-end gap-2">
-        <span class="font-black text-sm uppercase text-black">TOTAL $</span>
-        <div class="border-2 border-black rounded-xl px-3 py-1.5 min-w-[120px] text-right bg-white shadow-sm">
-          <input type="text" id="totalGeneral" readonly value="0.00" class="w-full font-black text-lg text-right text-black bg-transparent focus:outline-none">
+      <!-- Subtotal y total con IVA -->
+      <div class="sm:col-span-6 border-2 border-black rounded-box overflow-hidden bg-white">
+        <div class="flex items-center justify-between gap-3 px-3 py-2 border-b border-black">
+          <span class="font-bold text-[10px] sm:text-xs uppercase text-black whitespace-nowrap">Subtotal sin IVA</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <span class="font-bold text-sm text-black">$</span>
+            <input type="text" id="subtotalGeneral" readonly value="0.00" class="w-24 font-bold text-base text-right text-black bg-transparent focus:outline-none">
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-3 px-3 py-2 bg-slate-50">
+          <span class="font-black text-[10px] sm:text-xs uppercase text-black whitespace-nowrap">Total con IVA (16%)</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <span class="font-black text-sm text-black">$</span>
+            <input type="text" id="totalGeneral" readonly value="0.00" class="w-24 font-black text-lg text-right text-black bg-transparent focus:outline-none">
+          </div>
         </div>
       </div>
     </div>
@@ -269,118 +188,7 @@
 
   </div>
 
-  <!-- JAVASCRIPT Y LOGICA DE LA APLICACION -->
-  <script>
-    // Inicialización al cargar la página
-    window.onload = function() {
-      // Cargar fecha actual
-      const hoy = new Date();
-      document.getElementById('diaInput').value = String(hoy.getDate()).padStart(2, '0');
-      document.getElementById('mesInput').value = String(hoy.getMonth() + 1).padStart(2, '0');
-      document.getElementById('anioInput').value = hoy.getFullYear();
-
-      // Generar 8 filas por defecto según la nota original
-      for (let i = 0; i < 8; i++) {
-        agregarFila();
-      }
-    };
-
-    // Función para manejar la imagen enviada/cargada por el usuario
-    function cargarLogoPersonalizado(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const logoImg = document.getElementById('logoImg');
-          const watermarkImg = document.getElementById('watermarkImg');
-          const logoFallback = document.getElementById('logoFallback');
-
-          logoImg.src = e.target.result;
-          watermarkImg.src = e.target.result;
-          
-          logoImg.classList.remove('hidden');
-          watermarkImg.style.display = 'block';
-          logoFallback.classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Muestra el logo dinámico SVG si no encuentra la imagen física
-    function mostrarLogoFallback() {
-      document.getElementById('logoImg').classList.add('hidden');
-      document.getElementById('logoFallback').classList.remove('hidden');
-    }
-
-    // Agregar nueva fila a la tabla
-    function agregarFila() {
-      const tbody = document.getElementById('tablaCuerpo');
-      const tr = document.createElement('tr');
-
-      tr.innerHTML = `
-        <td class="py-1 px-1 border-r-2 border-black text-center">
-          <input type="number" min="0" oninput="calcularTotal()" class="cant-input w-full text-center font-bold focus:outline-none bg-transparent" placeholder="">
-        </td>
-        <td class="py-1 px-2 border-r-2 border-black">
-          <input type="text" class="w-full font-medium focus:outline-none bg-transparent" placeholder="">
-        </td>
-        <td class="py-1 px-2 border-r-2 border-black">
-          <input type="number" min="0" step="0.01" oninput="calcularTotal()" class="precio-input w-full text-right font-bold focus:outline-none bg-transparent" placeholder="">
-        </td>
-        <td class="py-1 px-2 text-right">
-          <input type="text" readonly class="importe-input w-full text-right font-black text-black bg-transparent focus:outline-none" value="0.00">
-        </td>
-        <td class="py-1 px-0.5 text-center no-print">
-          <button onclick="eliminarFila(this)" class="text-slate-400 hover:text-red-600 font-black text-sm p-0.5">✕</button>
-        </td>
-      `;
-
-      tbody.appendChild(tr);
-    }
-
-    // Eliminar fila individual
-    function eliminarFila(btn) {
-      const tbody = document.getElementById('tablaCuerpo');
-      if (tbody.children.length > 1) {
-        btn.closest('tr').remove();
-        calcularTotal();
-      }
-    }
-
-    // Cálculo automático de importes y total
-    function calcularTotal() {
-      const filas = document.querySelectorAll('#tablaCuerpo tr');
-      let total = 0;
-
-      filas.forEach(fila => {
-        const cant = parseFloat(fila.querySelector('.cant-input').value) || 0;
-        const precio = parseFloat(fila.querySelector('.precio-input').value) || 0;
-        const importe = cant * precio;
-        
-        fila.querySelector('.importe-input').value = importe > 0 ? importe.toFixed(2) : '0.00';
-        total += importe;
-      });
-
-      document.getElementById('totalGeneral').value = total.toFixed(2);
-    }
-
-    // Limpiar campos para nueva nota
-    function limpiarFormulario() {
-      if (confirm('¿Deseas vaciar los campos de la nota?')) {
-        document.querySelectorAll('input').forEach(input => {
-          if (input.id !== 'diaInput' && input.id !== 'mesInput' && input.id !== 'anioInput' && input.id !== 'logoUploader') {
-            input.value = '';
-          }
-        });
-        document.querySelectorAll('.importe-input').forEach(i => i.value = '0.00');
-        document.getElementById('totalGeneral').value = '0.00';
-      }
-    }
-
-    // Disparar ventana de impresión o guardado en PDF
-    function imprimirNota() {
-      window.print();
-    }
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
