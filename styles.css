@@ -4,6 +4,23 @@ body {
   color: #0f172a;
 }
 
+.info-cliente-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-cliente-label {
+  flex: 0 0 5.5rem;
+  min-width: 5.5rem;
+  display: block;
+}
+
+.info-cliente-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* Reglas avanzadas para exportación a PDF / Impresión */
 @media print {
   @page {
