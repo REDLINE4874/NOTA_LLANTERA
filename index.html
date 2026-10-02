@@ -35,6 +35,23 @@
         Limpiar
       </button>
 
+      <!-- Botón Cargar Firma (fuera del ticket para evitar conflictos) -->
+      <input type="file" id="inputArchivoFirma" accept="image/*" class="hidden" onchange="cargarFirmaDesdeArchivo(event)">
+      <button type="button" onclick="document.getElementById('inputArchivoFirma').click()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition flex items-center gap-1.5 border border-slate-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+        Cargar Firma
+      </button>
+
+      <!-- Descargar como Imagen PNG -->
+      <button onclick="generarTicketImagen(this)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg text-xs shadow-md transition flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Generar Ticket 
+      </button>
+
       <!-- Imprimir/PDF -->
       <button onclick="imprimirNota()" class="px-4 py-2 bg-black hover:bg-slate-800 text-white font-extrabold rounded-lg text-xs shadow-md transition flex items-center gap-1.5">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,19 +59,17 @@
         </svg>
         Imprimir / Guardar PDF
       </button>
-
     </div>
   </div>
 
   <!-- DOCUMENTO / HOJA DE NOTA DE COMPRA -->
-  <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-xl border border-slate-300 print-container relative overflow-hidden">
+  <div id="ticketContainer" class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-xl border border-slate-300 print-container relative overflow-hidden">
     
     <!-- ENCABEZADO SUPERIOR -->
     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4 items-start">
       
-      <!-- ENCABEZADO SUPERIOR IZQUIERDO: LOGO O IMAGEN PERSONALIZADA DE LA LLANTERA -->
+      <!-- ENCABEZADO SUPERIOR IZQUIERDO: LOGO -->
       <div class="sm:col-span-7 flex flex-col items-start justify-start text-left">
-        <!-- Coloca tu imagen como logo.png en la misma carpeta que este archivo. -->
         <div id="logoContainer" class="min-h-0 sm:min-h-36 w-full flex items-center justify-start">
           <img id="logoImg" src="logoll.jpeg" alt="Logo" class="max-h-48 max-w-full w-auto object-contain" onerror="this.style.display='none'">
         </div>
@@ -106,7 +121,7 @@
     <!-- TABLA DE PRODUCTOS Y SERVICIOS -->
     <div class="border-2 border-black rounded-box overflow-hidden mb-3 bg-white relative">
       
-      <!-- Marca de Agua Tenue en el centro de la tabla -->
+      <!-- Marca de Agua Tenue -->
       <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.04] z-0">
         <img id="watermarkImg" src="logo.png" class="max-w-xs object-contain" onerror="this.style.display='none'">
       </div>
@@ -115,14 +130,14 @@
         <thead>
           <tr class="border-b-2 border-black bg-white text-black font-black text-xs uppercase">
             <th class="py-1.5 px-2 border-r-2 border-black w-14 text-center">CANT.</th>
-            <th class="py-1.5 px-3 border-r-2 border-black">DESCRIPCIÓN / CONCEPTO</th>
-            <th class="py-1.5 px-2 border-r-2 border-black w-24 text-right">P. UNIT.</th>
-            <th class="py-1.5 px-2 w-28 text-right">IMPORTE</th>
+            <th class="py-1.5 px-3 border-r-2 border-black text-center">DESCRIPCIÓN / CONCEPTO</th>
+            <th class="py-1.5 px-2 border-r-2 border-black w-24 text-center">P. UNIT.</th>
+            <th class="py-1.5 px-2 w-28 text-center">IMPORTE</th>
             <th class="py-1.5 px-1 w-6 no-print text-center"></th>
           </tr>
         </thead>
         <tbody id="tablaCuerpo" class="divide-y-2 divide-black text-xs">
-          <!-- Las filas se insertan automáticamente vía JavaScript -->
+          <!-- Filas automáticas -->
         </tbody>
       </table>
 
@@ -147,7 +162,14 @@
     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end mb-4">
       <!-- Firma -->
       <div class="sm:col-span-6">
-        <div class="pt-6 border-b-2 border-black w-4/5"></div>
+        <div class="relative w-4/5 flex flex-col justify-end min-h-[60px]">
+          <!-- Contenedor de la imagen de la firma cargada -->
+          <div class="w-full flex items-end justify-center mb-1">
+            <img id="imgFirma" src="" alt="Firma" class="max-h-16 max-w-full object-contain select-none" style="display: none;">
+          </div>
+          <!-- Línea sobre la que descansa la firma -->
+          <div class="border-b-2 border-black w-full"></div>
+        </div>
         <p class="font-black text-xs uppercase text-black mt-1">FIRMA:</p>
       </div>
 
