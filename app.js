@@ -148,7 +148,58 @@ async function descargarFacturaComoImagen() {
     const canvas = await html2canvas(document.querySelector('.print-container'), {
       scale: 2,
       backgroundColor: '#ffffff',
-      ignoreElements: elemento => elemento.classList.contains('no-print')
+      ignoreElements: elemento => elemento.classList.contains('no-print'),
+      onclone: documentoClonado => {
+        const camposOriginales = [...document.querySelectorAll('.print-container input')];
+        const camposClonados = [...documentoClonado.querySelectorAll('.print-container input')];
+        const fechaOriginal = document.getElementById('diaInput').parentElement;
+        const fechaClonada = documentoClonado.getElementById('diaInput').parentElement;
+        const textoFecha = documentoClonado.createElement('span');
+        textoFecha.textContent = [
+          document.getElementById('diaInput').value,
+          document.getElementById('mesInput').value,
+          document.getElementById('anioInput').value
+        ].join(' / ');
+        textoFecha.style.display = 'flex';
+        textoFecha.style.alignItems = 'center';
+        textoFecha.style.justifyContent = 'center';
+        textoFecha.style.width = '100%';
+        textoFecha.style.minHeight = '28px';
+        textoFecha.style.lineHeight = '1.5';
+        textoFecha.style.color = '#000000';
+        textoFecha.style.backgroundColor = '#ffffff';
+        textoFecha.style.font = window.getComputedStyle(fechaOriginal).font;
+        textoFecha.style.fontSize = '16px';
+        textoFecha.style.fontWeight = '800';
+        textoFecha.style.whiteSpace = 'nowrap';
+        fechaClonada.replaceWith(textoFecha);
+
+        camposOriginales.forEach((campoOriginal, indice) => {
+          if (['diaInput', 'mesInput', 'anioInput'].includes(campoOriginal.id)) return;
+
+          const campoClonado = camposClonados[indice];
+          const estilos = window.getComputedStyle(campoOriginal);
+          const texto = documentoClonado.createElement('span');
+          texto.className = campoClonado.className;
+          texto.textContent = campoOriginal.value;
+          texto.style.display = 'inline-flex';
+          texto.style.alignItems = 'center';
+          texto.style.width = estilos.width;
+          texto.style.height = estilos.height;
+          texto.style.boxSizing = estilos.boxSizing;
+          texto.style.padding = estilos.padding;
+          texto.style.color = estilos.color;
+          texto.style.backgroundColor = estilos.backgroundColor;
+          texto.style.font = estilos.font;
+          texto.style.fontWeight = estilos.fontWeight;
+          texto.style.textAlign = estilos.textAlign;
+          texto.style.textTransform = estilos.textTransform;
+          texto.style.whiteSpace = campoOriginal.id === 'cantidadLetra' ? 'normal' : 'nowrap';
+          texto.style.overflowWrap = campoOriginal.id === 'cantidadLetra' ? 'anywhere' : 'normal';
+          texto.style.border = estilos.border;
+          campoClonado.replaceWith(texto);
+        });
+      }
     });
     const enlace = document.createElement('a');
     const folio = document.getElementById('folioInput').value.trim().replace(/[^a-z0-9_-]/gi, '') || 'sin-folio';

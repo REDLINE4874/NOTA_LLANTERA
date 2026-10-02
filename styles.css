@@ -35,6 +35,13 @@ body {
     outline: none !important;
     box-shadow: none !important;
   }
+  .date-input {
+    color: #000000 !important;
+    background: #ffffff !important;
+    border-bottom: 1.5px solid #000000 !important;
+    font-weight: 800 !important;
+    min-width: 2ch;
+  }
   /* Quitar indicadores de input de tipo número */
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button {
@@ -44,6 +51,14 @@ body {
   input[type=number] {
     -moz-appearance: textfield;
   }
+}
+
+.date-input {
+  color: #000000;
+  background: #ffffff;
+  border-bottom: 1.5px solid #000000;
+  font-weight: 800;
+  min-width: 2ch;
 }
 
 /* Ocultar botones incrementales de número */
