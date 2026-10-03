@@ -255,6 +255,7 @@ async function generarTicketImagen(btn) {
   try {
     const canvas = await html2canvas(ticket, {
       scale: 3, // Alta definición
+      windowWidth: 1024,
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
